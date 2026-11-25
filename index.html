@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>MSc Robotics Dissertation Showcase | Gogulnath Sathish Amuthavalli</title>
+  <meta name="description" content="Complete MSc Robotics Dissertation showcase by Gogulnath Sathish Amuthavalli (University of Bristol): RoboMamba-DINO-ACT visuomotor policy on the 6-DoF SO-101 arm and NVIDIA Isaac Sim.">
+  <meta property="og:title" content="RoboMamba-DINO-ACT — MSc Robotics Dissertation Showcase">
+  <meta property="og:description" content="Latency-Aware Visuomotor Policies for Robotic Manipulation: Comparative Simulation (Isaac Sim) & Physical Study (6-DoF SO-101 Arm). Interactive slide reel, videos, architecture, and benchmarks.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Navigation -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-dot"></span>
+        <span>GOGULNATH S.A. // MSC DISSERTATION</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#slide-reel">Interactive Slide Show</a></li>
+        <li><a href="#videos">Videos</a></li>
+        <li><a href="#architecture">System Involved</a></li>
+        <li><a href="#benchmarks">Benchmarks</a></li>
+        <li><a href="#engineering">Hardware &amp; Safety</a></li>
+        <li><a href="#archive">All Files &amp; Code</a></li>
+        <li><a href="interactive-reel.html" target="_blank" rel="noopener" class="nav-cta">Fullscreen Slides ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="top">
+    <div class="container">
+      <div class="eyebrow-row">
+        <span class="badge">MSc Robotics Dissertation · EMATM0055</span>
+        <span class="badge badge-teal">Bristol Robotics Laboratory · University of Bristol</span>
+      </div>
+      <h1>
+        Latency-Aware Visuomotor Policies for Robotic Manipulation:<br>
+        <span class="highlight">RoboMamba-DINO-ACT</span> on the 6-DoF SO-101 Arm
+      </h1>
+      <div class="hero-meta">
+        <span><strong>Author:</strong> Gogulnath Sathish Amuthavalli</span>
+        <span><strong>Institution:</strong> University of Bristol &amp; UWE (Bristol Robotics Laboratory)</span>
+        <span><strong>Supervisor:</strong> Mark Hansen</span>
+        <span><strong>Completed:</strong> September 2026</span>
+      </div>
+      <p class="hero-lead">
+        Complete overview of my MSc Robotics dissertation research and physical hardware deployment — unifying
+        <strong>frozen Meta DINOv2</strong> spatial patch tokens, <strong>4×4 Spatial Adaptive Pooling</strong>,
+        a <strong>6-layer Selective State-Space Model (Mamba SSM)</strong> with linear <em>O(L)</em> complexity,
+        and an <strong>Action Chunking Transformer (ACT)</strong> decoder for closed-loop manipulation across
+        <strong>NVIDIA Isaac Sim 5.1</strong> and a physical <strong>6-DoF SO-101 robotic arm</strong>.
+      </p>
+
+      <div class="cta-row">
+        <a href="#slide-reel" class="btn btn-primary">▶ Interactive Slide Show</a>
+        <a href="#videos" class="btn btn-teal">🎬 Watch Robot &amp; Sim Videos</a>
+        <a href="#architecture" class="btn">🧠 Architecture &amp; Stack</a>
+        <a href="https://github.com/GogulnathSA123/RoboMamba_DINO_ACT_Policy" target="_blank" rel="noopener" class="btn">💻 Source Code Repo ↗</a>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card teal">
+          <div class="kpi-value">92.0% ± 1.6%</div>
+          <div class="kpi-label">Isaac Sim Task Success</div>
+          <div class="kpi-sub">138 / 150 trials across 3 seeds — <strong>6.9× boost</strong> over Canonical ACT baseline (13.3%).</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">50.0% (2.5×)</div>
+          <div class="kpi-label">Physical SO-101 Success</div>
+          <div class="kpi-sub">Closed-loop real hardware pick-and-place vs. 20.0% for ACT under real lighting &amp; UART latency.</div>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-value">4.12 s (7.5×)</div>
+          <div class="kpi-label">Faster Task Completion</div>
+          <div class="kpi-sub">Finishes in <strong>60.8 ± 1.8 steps</strong> vs. 1,068 ± 184 steps (31.1 s) for baseline ACT.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">27.0M / 1.35 GB</div>
+          <div class="kpi-label">Active Edge Footprint</div>
+          <div class="kpi-sub">CVAE encoder pruned at test time; uses just <strong>16.8% VRAM</strong> of an 8 GB Jetson Orin Nano.</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 1: Interactive Overprint Slide Reel -->
+  <section class="section" id="slide-reel">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">01 // Interactive Dissertation Slide Show</div>
+          <h2 class="section-title">Interactive Policy Slide Reel — “Look Once. Act ×16.”</h2>
+          <p class="section-desc">
+            6-slide interactive presentation built alongside our Leader–Follower SO-101 hardware setup at the University of Bristol.
+            Features real-time 2-link inverse kinematics with 16 translucent ghost poses visualizing predicted action chunks,
+            live 512→32 DINOv2 patch pooling, and temporal ensembling curves.
+          </p>
+        </div>
+        <a href="interactive-reel.html" target="_blank" rel="noopener" class="btn btn-primary">Launch Fullscreen 1920×1080 Slides ↗</a>
+      </div>
+
+      <div class="reel-shell">
+        <div class="reel-toolbar">
+          <div class="reel-toolbar-left">
+            <span>● LIVE HTML5 CANVAS SLIDE REEL (6 INTERACTIVE SLIDES)</span>
+          </div>
+          <div class="reel-controls">
+            <button class="reel-btn" type="button" id="reelPrev">← Prev Slide</button>
+            <button class="reel-btn" type="button" id="reelPause">Pause / Play</button>
+            <button class="reel-btn" type="button" id="reelNext">Next Slide →</button>
+            <a class="reel-btn reel-btn-solid" href="interactive-reel.html" target="_blank" rel="noopener">Open Fullscreen ↗</a>
+          </div>
+        </div>
+        <div class="reel-frame-wrap">
+          <iframe id="reelFrame" src="interactive-reel.html?embed=1" title="RoboMamba-DINO-ACT Interactive Overprint Slide Reel" loading="lazy" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="reel-highlights">
+        <div class="mini-card">
+          <h4>Slide 01–02 · Action Chunking &amp; SO-101 Hardware</h4>
+          <p>Visualizes the live 6-DoF arm executing current joint targets while rendering the 16-step future trajectory chunk committed in a single forward pass.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Slide 03–04 · 513 → 33 Token Compression &amp; SSM Scan</h4>
+          <p>Animates dual-camera 16×16 DINOv2 patch grids compressing into 4×4 spatial tokens plus 1 proprioceptive state token flowing through Mamba SSM layers.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Slide 05–06 · Temporal Ensembling &amp; Key Metrics</h4>
+          <p>Demonstrates overlapping chunk smoothing <code>w = exp(−k·age)</code> across 16 predictions per timestep and highlights key engineering trade-offs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Videos -->
+  <section class="section" id="videos">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">02 // Physical &amp; Simulation Demonstrations</div>
+          <h2 class="section-title">Robot Manipulation &amp; Simulation Videos</h2>
+          <p class="section-desc">
+            Closed-loop policy rollouts recorded on the physical 6-DoF SO-101 robotic arm and in the NVIDIA Isaac Sim 5.1 digital twin.
+          </p>
+        </div>
+      </div>
+
+      <div class="video-grid">
+        <!-- Real-world SO-101 Manipulation -->
+        <article class="video-card">
+          <div class="video-stage">
+            <video controls autoplay muted loop playsinline preload="metadata" src="assets/videos/robomamba_realworld_so101.mp4"></video>
+          </div>
+          <div class="video-body">
+            <span class="badge badge-teal">Physical Hardware-in-the-Loop (HITL)</span>
+            <h3>Real-World 6-DoF SO-101 Autonomous Pick-and-Place</h3>
+            <p>
+              Closed-loop autonomous deployment on the physical 3D-printed 6-DoF SO-101 follower arm driven by
+              Feetech STS3215 bus servos over 1,000,000-baud UART. Uses synchronized side and in-hand wrist USB RGB
+              cameras to grasp a 35 mm red cube and place it cleanly inside the 100×100 mm grey container.
+            </p>
+            <div class="tag-row">
+              <span class="tag">SO-101 Follower Arm</span>
+              <span class="tag">Dual USB RGB Cameras</span>
+              <span class="tag">1M-Baud UART</span>
+              <span class="tag">Zero-Jitter Trajectory</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Isaac Sim HIL Rollout -->
+        <article class="video-card">
+          <div class="video-stage">
+            <video controls autoplay muted loop playsinline preload="metadata" src="assets/videos/isaac_sim_hil_rollout.mp4"></video>
+          </div>
+          <div class="video-body">
+            <span class="badge">NVIDIA Isaac Sim 5.1 / LeIsaac</span>
+            <h3>Simulation Digital Twin Closed-Loop Policy Rollout</h3>
+            <p>
+              Real-time visuomotor rollout in <code>LeIsaac-SO101-CustomTask-v0</code> under PhysX 5.0 contact dynamics
+              and ray-traced dual-camera rendering. Achieves <strong>92.0% ± 1.6%</strong> success across 150 trials
+              (3 random seeds) and completes pick-and-place in <strong>4.12 ± 0.18 s</strong> wall-clock time.
+            </p>
+            <div class="tag-row">
+              <span class="tag">Isaac Sim 5.1 / Isaac Lab</span>
+              <span class="tag">PhysX 5.0</span>
+              <span class="tag">92.0% Success (N=150)</span>
+              <span class="tag">Temporal Ensembling</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Everything Involved (System Architecture & Stack) -->
+  <section class="section" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">03 // What Was Involved End-to-End</div>
+          <h2 class="section-title">System Architecture, Hardware, Training &amp; Software Stack</h2>
+          <p class="section-desc">
+            Every technical layer built, integrated, trained, and validated across neural architecture design,
+            multi-camera perception, GPU systems engineering, simulation digital twins, and physical UART robot control.
+          </p>
+        </div>
+      </div>
+
+      <div class="arch-banner">
+        <img src="assets/figures/system_architecture.png" alt="RoboMamba-DINO-ACT Two-Stage Architecture Diagram" data-lightbox>
+        <div class="arch-caption">
+          Figure 1 — Two-Stage RoboMamba-DINO-ACT Pipeline (click any diagram to enlarge): Dual 224×224 RGB streams → Frozen DINOv2 ViT-B/14 (256 tokens/cam) → 4×4 Spatial Adaptive Pooling (32 visual tokens) + Joint State + CVAE Latent → 6-Layer Mamba SSM Encoder → ACT Cross-Attention Decoder (16-step 6-DoF action chunk).
+        </div>
+      </div>
+
+      <div class="stack-grid">
+        <div class="stack-card">
+          <div class="stack-num">01 · Visual Perception</div>
+          <h3>Frozen Meta DINOv2 + 4×4 Spatial Adaptive Pooling</h3>
+          <p>
+            Standard ResNet-18 backbones apply global average pooling that discards 2D coordinate geometry, causing severe
+            sim-to-real failure during 3D box placement. We use frozen self-supervised <strong>DINOv2 ViT-B/14</strong>
+            (86.58M frozen params) to extract 256 geometric patch tokens per camera (768-dim), then reshape into a 16×16
+            spatial grid and apply 2D adaptive pooling to 4×4:
+          </p>
+          <div class="formula-box">512 raw tokens (2×256) → 32 spatial tokens (16× reduction, preserving 2D layout)</div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-num">02 · Sequence Backbone</div>
+          <h3>6-Layer RoboMamba Selective State-Space Encoder</h3>
+          <p>
+            Replaces quadratic <em>O(L²)</em> Transformer self-attention with a 6-layer Selective State-Space Model (Mamba)
+            operating in linear <em>O(L)</em> compute and constant <em>O(1)</em> recurrent memory. Concatenates 32 pooled
+            visual tokens, 1 projected 6-DoF proprioception token, and 1 CVAE latent token into a compact 34-token sequence.
+          </p>
+          <div class="formula-box">d_model = 512, d_state = 16, expand E = 2, d_conv = 4 (22.37M trainable params)</div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-num">03 · Trajectory Generation</div>
+          <h3>ACT Query Decoder, CVAE &amp; Temporal Ensembling</h3>
+          <p>
+            A DETR-style Transformer decoder uses <strong>K = 16</strong> sinusoidal action queries to predict a 16-step
+            6-DoF trajectory chunk in one parallel pass. Trained with unified continuous L1 loss + KL divergence regularization
+            (β = 10.0). At inference, the 12.65M CVAE encoder is omitted (<code>z = 0</code>), leaving only
+            <strong>27.00M active parameters</strong> smoothed via exponential temporal ensembling.
+          </p>
+          <div class="formula-box">w_i = exp(−0.01 · i) · Smooth closed-loop joint targets without boundary jitter</div>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-num">04 · Physical Robot HITL</div>
+          <h3>6-DoF SO-101 Leader–Follower &amp; Dual Cameras</h3>
+          <ul>
+            <li><strong>Manipulator:</strong> 5 revolute joints (waist, shoulder, elbow, wrist pitch, wrist roll) + 1 continuous parallel gripper.</li>
+            <li><strong>Actuation &amp; Bus:</strong> Feetech STS3215 serial bus servos with 12-bit absolute magnetic encoders over 1,000,000-baud half-duplex UART (<code>/dev/ttyACM0</code>).</li>
+            <li><strong>Sensors &amp; Data:</strong> Synchronized static side + in-hand wrist USB cameras (640×480 @ 30 FPS); recorded <strong>300 physical teleoperated episodes (76,634 AV1 frames)</strong> in LeRobot v3.0 format.</li>
+          </ul>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-num">05 · Simulation Digital Twin</div>
+          <h3>NVIDIA Isaac Sim 5.1 / Isaac Lab (LeIsaac)</h3>
+          <ul>
+            <li><strong>Environment:</strong> Custom tabletop task <code>LeIsaac-SO101-CustomTask-v0</code> picking a 35 mm red cube into a 100×100×40 mm grey box.</li>
+            <li><strong>Physics &amp; Rendering:</strong> PhysX 5.0 contact dynamics + ray-traced overhead front and wrist virtual cameras; 300 simulated demonstration episodes.</li>
+            <li><strong>Evaluation Harness:</strong> Automated multi-seed benchmark across seeds <code>42, 100, 2024</code> (150 trials/model) tracking 4 Cartesian sub-goal milestones.</li>
+          </ul>
+        </div>
+
+        <div class="stack-card">
+          <div class="stack-num">06 · Compute &amp; MLOps</div>
+          <h3>RTX 5090 Training, RTX 3080 Profiling &amp; Docker</h3>
+          <ul>
+            <li><strong>Training:</strong> 200,000 gradient steps on NVIDIA RTX 5090 (32 GB VRAM), batch size 64, AdamW + Cosine LR, FP16 AMP, and contiguous in-RAM trajectory caching for zero disk I/O stalls.</li>
+            <li><strong>Profiling:</strong> Exact GPU kernel timing via <code>torch.cuda.Event</code> &amp; NVML on RTX 3080 (10 GB VRAM).</li>
+            <li><strong>Deployment:</strong> Dockerized inference stack + Hugging Face Hub Safetensors auto-export + pre-flight hardware diagnostic suite.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="figure-grid">
+        <div class="figure-card">
+          <div class="figure-img-box">
+            <img src="assets/figures/dual_env_comparison.png" alt="NVIDIA Isaac Sim vs Physical SO-101 Workspace" data-lightbox>
+          </div>
+          <div class="figure-caption">
+            <strong>Dual-Domain Evaluation Workspaces:</strong> Matched NVIDIA Isaac Sim 5.1 PhysX tabletop environment (left) and physical 6-DoF SO-101 enclosure with overhead illumination and dual USB cameras (right).
+          </div>
+        </div>
+        <div class="figure-card">
+          <div class="figure-img-box">
+            <img src="assets/figures/dual_camera_inputs.png" alt="Static Side-View and Wrist-Mounted RGB Camera Streams" data-lightbox>
+          </div>
+          <div class="figure-caption">
+            <strong>Synchronized Multi-View Perception:</strong> Static side-view RGB stream providing global box/cube geometry (left) paired with in-hand wrist RGB stream resolving millimeter-level grasp alignment (right).
+          </div>
+        </div>
+        <div class="figure-card">
+          <div class="figure-img-box">
+            <img src="assets/figures/hyperparameter_sweep_analysis.png" alt="Hyperparameter Sweep and Spatial Pooling Ablation Plots" data-lightbox>
+          </div>
+          <div class="figure-caption">
+            <strong>Hyperparameter &amp; Spatial Pooling Ablations:</strong> Sensitivity sweeps over base learning rate α, decoupled weight decay λ, CVAE KL weight β = 10.0, and 2×2 → 16×16 spatial pooling latency vs. accuracy Pareto frontier.
+          </div>
+        </div>
+        <div class="figure-card">
+          <div class="figure-img-box dark">
+            <img src="assets/figures/so101_real.jpg" alt="Physical LeRobot SO-101 6-DoF Robotic Arm" data-lightbox>
+          </div>
+          <div class="figure-caption">
+            <strong>Physical 6-DoF SO-101 Platform:</strong> Low-cost 3D-printed manipulator driven by daisy-chained Feetech STS3215 bus servos used for leader–follower teleoperation and closed-loop autonomous execution.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Quantitative Benchmarks -->
+  <section class="section" id="benchmarks">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">04 // Empirical Evaluation &amp; Profiling</div>
+          <h2 class="section-title">Simulation &amp; Physical Benchmark Results</h2>
+          <p class="section-desc">
+            Rigorous head-to-head comparison between Canonical ACT (ResNet-18 + Transformer Encoder) and
+            RoboMamba-DINO-ACT across 300 simulation rollouts and 20 live physical robot trials.
+          </p>
+        </div>
+      </div>
+
+      <div class="tables-grid">
+        <div class="table-card">
+          <h3>Table I · Multi-Seed Simulation Task Success</h3>
+          <div class="table-sub">NVIDIA Isaac Sim 5.1 (N = 150 trials per policy across 3 independent seeds)</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Random Seed (50 trials)</th>
+                <th>Canonical ACT</th>
+                <th>RoboMamba-DINO-ACT</th>
+                <th>Gain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Seed 42</td>
+                <td>8 / 50 (16.0%)</td>
+                <td class="val-win">46 / 50 (92.0%)</td>
+                <td>+76.0% (5.75×)</td>
+              </tr>
+              <tr>
+                <td>Seed 100</td>
+                <td>6 / 50 (12.0%)</td>
+                <td class="val-win">45 / 50 (90.0%)</td>
+                <td>+78.0% (7.50×)</td>
+              </tr>
+              <tr>
+                <td>Seed 2024</td>
+                <td>6 / 50 (12.0%)</td>
+                <td class="val-win">47 / 50 (94.0%)</td>
+                <td>+82.0% (7.83×)</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>Mean ± Std (150 trials)</td>
+                <td>13.3% ± 1.9%</td>
+                <td class="val-win">92.0% ± 1.6%</td>
+                <td class="val-win">+78.7% (6.9×)</td>
+              </tr>
+              <tr>
+                <td>Composite Partial Score</td>
+                <td>72.0% ± 1.5%</td>
+                <td class="val-win">98.0% ± 0.4%</td>
+                <td>+26.0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-card">
+          <h3>Table II · Stage-by-Stage Failure Mode Diagnostics</h3>
+          <div class="table-sub">Pinpointing where ResNet-18 global pooling fails vs. DINOv2 patch tokens</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Manipulation Sub-Stage</th>
+                <th>Canonical ACT</th>
+                <th>RoboMamba-DINO-ACT</th>
+                <th>Diagnostic Insight</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1. Reach Cube (≤ 18 cm)</td>
+                <td>100.0% ± 0.0%</td>
+                <td>100.0% ± 0.0%</td>
+                <td>Both reach target reliably</td>
+              </tr>
+              <tr>
+                <td>2. Grasp &amp; Lift (z ≥ 4.5 cm)</td>
+                <td>100.0% ± 0.0%</td>
+                <td>100.0% ± 0.0%</td>
+                <td>Both establish solid grasp</td>
+              </tr>
+              <tr>
+                <td>3. Transport Near Box (≤ 15 cm)</td>
+                <td class="val-warn">74.7% ± 4.1%</td>
+                <td class="val-win">100.0% ± 0.0%</td>
+                <td>ACT drifts &amp; drops mid-air</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>4. Release Inside Box (Complete)</td>
+                <td class="val-warn">13.3% ± 1.9%</td>
+                <td class="val-win">92.0% ± 1.6%</td>
+                <td class="val-win">DINOv2 preserves 3D box offset</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-card full">
+          <h3>Table III · Physical SO-101 Deployment, Compute Latency &amp; GPU Memory Profile</h3>
+          <div class="table-sub">Measured on NVIDIA RTX 3080 workstation driving the physical 6-DoF SO-101 arm &amp; Isaac Sim loop</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Evaluation / Hardware Metric</th>
+                <th>Canonical ACT Baseline</th>
+                <th>RoboMamba-DINO-ACT (Ours)</th>
+                <th>Practical Engineering Impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row">
+                <td>Physical SO-101 Task Success Rate (10 Live Trials)</td>
+                <td>20.0% (2 / 10)</td>
+                <td class="val-win">50.0% (5 / 10)</td>
+                <td class="val-win">2.5× higher real-world success; zero servo oscillation</td>
+              </tr>
+              <tr>
+                <td>Physical Control Frequency / Dominant Failure</td>
+                <td>59.55 Hz (Severe servo jitter &amp; backlash)</td>
+                <td>10.46 Hz (Smooth motion; minor wrist-roll drift)</td>
+                <td>Higher-quality action chunks outweigh raw step rate</td>
+              </tr>
+              <tr>
+                <td>Simulation Model Forward Pass (GPU)</td>
+                <td>2.03 ± 1.53 ms</td>
+                <td>39.48 ± 1.96 ms (13.54 Hz full sim loop)</td>
+                <td>Includes 86.58M frozen DINOv2 ViT-B/14 extraction</td>
+              </tr>
+              <tr class="highlight-row">
+                <td>Steps &amp; Wall-Clock Time to Complete Task (Sim)</td>
+                <td class="val-warn">1,068 ± 184 steps (31.1 ± 5.4 s)</td>
+                <td class="val-win">60.8 ± 1.8 steps (4.12 ± 0.18 s)</td>
+                <td class="val-win">17.5× fewer steps · 7.5× faster real-time completion</td>
+              </tr>
+              <tr>
+                <td>Dedicated PyTorch VRAM Usage (Inference)</td>
+                <td>209.8 MB</td>
+                <td>1,349.5 MB (1.35 GB constant O(1) state)</td>
+                <td>Fits in 16.8% of an 8 GB NVIDIA Jetson Orin Nano</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Real-World Debugging & Hardware Safety -->
+  <section class="section" id="engineering">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">05 // Systems Debugging &amp; Operational Safety</div>
+          <h2 class="section-title">Real-World Hardware Troubleshooting &amp; Safety Engineering</h2>
+          <p class="section-desc">
+            Bridging neural policies from simulation to physical serial servos and operating reliably on physical lab
+            hardware required solving concrete hardware-software edge cases.
+          </p>
+        </div>
+      </div>
+
+      <div class="debug-grid">
+        <div class="debug-card">
+          <div class="stack-num">Root-Cause Fix #1 · Physical Hardware</div>
+          <h3>Solving −21.77σ Out-of-Distribution Servo Jump</h3>
+          <p>
+            During initial physical SO-101 tests, <code>wrist_roll</code> snapped violently by +136.4° at startup.
+            Telemetry profiling revealed Feetech STS3215 180° horn periodicity caused resting encoders to read −153.8°
+            against a training distribution of +2.97° ± 7.20° (a <strong>−21.77σ OOD input</strong>). Implemented a
+            2-second smooth linear auto-homing routine to align all 6 joints to the exact dataset manifold prior to policy loop activation.
+          </p>
+        </div>
+
+        <div class="debug-card">
+          <div class="stack-num">Root-Cause Fix #2 · Sim-to-Real Bridge</div>
+          <h3>Gripper Release Calibration &amp; Python 3.11 AST Refactor</h3>
+          <p>
+            Diagnosed why early simulation rollouts grasped and transported the cube at 100% yet failed to release over the box:
+            a legacy linear scaling heuristic compressed predicted 35°–45° opening angles below the release threshold. Restoring
+            uncorrupted continuous [0°, 60.76°] pass-through unlocked full task completion. Also refactored PEP 695 generics across
+            150+ modules for zero-error compatibility with Isaac Sim's Python 3.11 runtime.
+          </p>
+        </div>
+
+        <div class="debug-card safety">
+          <div class="stack-num" style="color:var(--teal);">Hardware Operations · Safety &amp; Reliability</div>
+          <h3>6-Stage Pre-Flight Diagnostic &amp; Signed Risk Register</h3>
+          <p>
+            Engineered <code>demo_preflight_check.py</code> to validate CUDA memory, checkpoint integrity, dataset z-score
+            normalizer tensors, temporal ensembling buffers, and 30 Hz loop latency before every physical hardware run.
+            Authored the formal University of Bristol SO-101 Safety Risk Register (5 V USB low-torque compliance, 20% velocity cap,
+            1 m exclusion barrier, and E-stop watchdog) signed off by Supervisor Mark Hansen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Complete Archive of Deliverables & Repos -->
+  <section class="section" id="archive">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">06 // Technical Guides &amp; Open-Source Code</div>
+          <h2 class="section-title">Documentation, Interactive Slides &amp; Repositories</h2>
+          <p class="section-desc">
+            Direct access to the interactive presentation, technical architecture manuals, safety documentation, and open-source codebases.
+          </p>
+        </div>
+      </div>
+
+      <div class="docs-grid">
+        <a class="doc-card" href="interactive-reel.html" target="_blank" rel="noopener">
+          <span class="doc-type">Interactive HTML5 · 1920×1080</span>
+          <h3>Interactive Policy Slide Reel</h3>
+          <p>6-slide interactive Overprint Reel featuring live canvas 2-link IK arm trajectory chunks, 512→32 DINOv2 token pooling scan, and temporal ensembling curves.</p>
+          <span class="doc-link">Launch Interactive Slides →</span>
+        </a>
+
+        <a class="doc-card" href="assets/docs/RoboMamba_DINO_ACT_Visual_Architecture_Guide.pdf" target="_blank" rel="noopener">
+          <span class="doc-type">PDF · Visual Architecture Guide</span>
+          <h3>DINOv2 + RoboMamba + ACT Visual Guide</h3>
+          <p>High-level visual system workflow and architectural poster illustrating multi-camera patch extraction, SSM selective scan, and ghost-gripper trajectory decoding.</p>
+          <span class="doc-link">Open Visual Guide PDF →</span>
+        </a>
+
+        <a class="doc-card" href="assets/docs/RoboMamba_ACT_Technical_Implementation_Report.pdf" target="_blank" rel="noopener">
+          <span class="doc-type">PDF · 13 Pages · Engineering Spec</span>
+          <h3>Technical Implementation Manual</h3>
+          <p>Deep implementation manual covering 6-DoF wheel-stripping, z-score normalizer/unnormalizer math, LeRobot Safetensors export, and RTX 5090 training configuration.</p>
+          <span class="doc-link">Open Technical Report →</span>
+        </a>
+
+        <a class="doc-card" href="assets/docs/SO101_Safety_Risk_Register.pdf" target="_blank" rel="noopener">
+          <span class="doc-type">PDF · Signed Safety Compliance</span>
+          <h3>SO-101 Hardware Safety Risk Register</h3>
+          <p>Official University of Bristol safety statement, low-voltage/low-torque hazard analysis, control measures, and supervisor sign-off for physical SO-101 operation.</p>
+          <span class="doc-link">Open Risk Register PDF →</span>
+        </a>
+
+        <a class="doc-card" href="https://github.com/GogulnathSA123/RoboMamba_DINO_ACT_Policy" target="_blank" rel="noopener">
+          <span class="doc-type repo">GitHub Repository · Public</span>
+          <h3>RoboMamba_DINO_ACT_Policy</h3>
+          <p>Primary training, LeIsaac simulation benchmark (150-trial multi-seed harness), CUDA latency profiler, and physical SO-101 serial UART evaluation codebase.</p>
+          <span class="doc-link">View Code on GitHub ↗</span>
+        </a>
+
+        <a class="doc-card" href="https://github.com/GogulnathSA123/RoboMamba_Policy_Inference" target="_blank" rel="noopener">
+          <span class="doc-type repo">GitHub Repository · Public</span>
+          <h3>RoboMamba_Policy_Inference</h3>
+          <p>Standalone 1-click Dockerized CPU/GPU inference &amp; evaluation container pre-caching DINOv2 + Mamba SSM + ACT for portable deployment.</p>
+          <span class="doc-link">View Container Repo ↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Gogulnath Sathish Amuthavalli</strong> · MSc Robotics, University of Bristol · Bristol, UK
+      </div>
+      <div class="footer-links">
+        <a href="mailto:gogulnathsa2001@gmail.com">gogulnathsa2001@gmail.com</a>
+        <a href="https://github.com/GogulnathSA123" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/gogulnathsa/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://gogulnathsa123.github.io/Portfolio/" target="_blank" rel="noopener">Main Portfolio</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Image Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged diagram viewer">
+    <img id="lightboxImg" src="" alt="Enlarged figure">
+  </div>
+
+  <script>
+    (function () {
+      // 1. Embedded Interactive Slide Reel Controls
+      const reelFrame = document.getElementById('reelFrame');
+      function sendReelKey(key) {
+        try {
+          if (reelFrame && reelFrame.contentWindow) {
+            reelFrame.contentWindow.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+          }
+        } catch (e) {}
+      }
+      document.getElementById('reelPrev').addEventListener('click', () => sendReelKey('ArrowLeft'));
+      document.getElementById('reelNext').addEventListener('click', () => sendReelKey('ArrowRight'));
+      document.getElementById('reelPause').addEventListener('click', () => sendReelKey(' '));
+
+      // 2. Lightbox for Diagrams & Figures
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightboxImg');
+      document.querySelectorAll('[data-lightbox]').forEach(el => {
+        el.addEventListener('click', () => {
+          lightboxImg.src = el.src;
+          lightboxImg.alt = el.alt || 'Enlarged diagram';
+          lightbox.classList.add('open');
+        });
+      });
+      lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') lightbox.classList.remove('open');
+      });
+    })();
+  </script>
+</body>
+</html>
